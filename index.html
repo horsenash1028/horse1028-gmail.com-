@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ETF 投資組合管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              skin: {
+                base: 'var(--color-base)',
+                card: 'var(--color-card)',
+                'text-base': 'var(--color-text-base)',
+                'text-muted': 'var(--color-text-muted)',
+                border: 'var(--color-border)',
+                primary: 'var(--color-primary)',
+                'primary-fg': 'var(--color-primary-fg)',
+                'primary-bg': 'var(--color-primary-bg)',
+                'cost-bg': 'var(--color-cost-bg)',
+                'value-bg': 'var(--color-value-bg)',
+                success: 'var(--color-success)',
+                danger: 'var(--color-danger)',
+                stock: 'var(--color-stock)',
+                bond: 'var(--color-bond)',
+                cash: 'var(--color-cash)',
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      :root {
+        /* Default Light Theme */
+        --color-base: #f3f4f6;       /* gray-100 */
+        --color-card: #ffffff;       /* white */
+        --color-text-base: #111827;  /* gray-900 */
+        --color-text-muted: #6b7280; /* gray-500 */
+        --color-border: #e5e7eb;     /* gray-200 */
+        --color-primary: #4f46e5;    /* indigo-600 */
+        --color-primary-fg: #ffffff; /* white */
+        --color-primary-bg: #eef2ff; /* indigo-50 */
+        --color-cost-bg: #eff6ff;    /* blue-50 */
+        --color-value-bg: #fff7ed;   /* orange-50 */
+        --color-success: #ef4444;    /* red-500 (Taiwan Up) */
+        --color-danger: #22c55e;     /* green-500 (Taiwan Down) */
+        
+        /* New Custom Variables Defaults */
+        --color-stock: #ef4444;      /* red-500 */
+        --color-bond: #3b82f6;       /* blue-500 */
+        --color-cash: #10b981;       /* emerald-500 */
+
+        --bg-blob-1: #e0e7ff;
+        --bg-blob-2: #fae8ff;
+        --bg-blob-3: #d1fae5;
+      }
+
+      [data-theme='dark'] {
+        --color-base: #0f172a;       /* slate-900 */
+        --color-card: #1e293b;       /* slate-800 */
+        --color-text-base: #f8fafc;  /* slate-50 */
+        --color-text-muted: #94a3b8; /* slate-400 */
+        --color-border: #334155;     /* slate-700 */
+        --color-primary: #818cf8;    /* indigo-400 */
+        --color-primary-fg: #ffffff;
+        --color-primary-bg: #312e81; /* indigo-900 */
+        --color-cost-bg: #1e3a8a;    /* blue-900 */
+        --color-value-bg: #7c2d12;   /* orange-900 */
+        --color-success: #f87171;    /* red-400 (Taiwan Up) */
+        --color-danger: #4ade80;     /* green-400 (Taiwan Down) */
+        
+        /* Dark defaults */
+        --color-stock: #ef4444;
+        --color-bond: #3b82f6;
+        --color-cash: #10b981;
+
+        --bg-blob-1: #1e1b4b;
+        --bg-blob-2: #312e81;
+        --bg-blob-3: #064e3b;
+      }
+
+      [data-theme='contrast'] {
+        --color-base: #000000;
+        --color-card: #000000;
+        --color-text-base: #ffffff;
+        --color-text-muted: #ffff00;
+        --color-border: #ffffff;
+        --color-primary: #ffff00;
+        --color-primary-fg: #000000;
+        --color-primary-bg: #333333;
+        --color-cost-bg: #111111;
+        --color-value-bg: #222222;
+        --color-success: #ff00ff;    /* magenta/red equivalent */
+        --color-danger: #00ff00;     /* green equivalent */
+
+        /* Contrast defaults */
+        --color-stock: #ff00ff;
+        --color-bond: #00ffff;
+        --color-cash: #00ff00;
+
+        --bg-blob-1: #000000;
+        --bg-blob-2: #000000;
+        --bg-blob-3: #000000;
+      }
+
+      [data-theme='classic'] {
+        --color-base: #f9f5eb;       /* warm beige */
+        --color-card: #ffffff;       /* white */
+        --color-text-base: #4a4a4a;  /* dark gray */
+        --color-text-muted: #8c8c8c; /* gray */
+        --color-border: #dcd7c9;     /* darker beige */
+        --color-primary: #2c3e50;    /* dark slate */
+        --color-primary-fg: #ffffff;
+        --color-primary-bg: #e8ecef; /* light slate bg */
+        --color-cost-bg: #e6e2d3;
+        --color-value-bg: #faeedd;
+        --color-success: #c0392b;    /* red */
+        --color-danger: #27ae60;     /* green */
+
+        --color-stock: #c0392b;
+        --color-bond: #2980b9;
+        --color-cash: #27ae60;
+
+        --bg-blob-1: #e8e4d5;
+        --bg-blob-2: #d6d2c4;
+        --bg-blob-3: #f0ede6;
+      }
+
+      [data-theme='vibrant'] {
+        --color-base: #111827;       /* very dark blue */
+        --color-card: #1f2937;       /* dark gray blue */
+        --color-text-base: #f3f4f6;  /* whiteish */
+        --color-text-muted: #9ca3af;
+        --color-border: #374151;
+        --color-primary: #ec4899;    /* Pink 500 */
+        --color-primary-fg: #ffffff;
+        --color-primary-bg: #831843; /* Pink 900 */
+        --color-cost-bg: #3730a3;    /* Indigo 800 */
+        --color-value-bg: #7c2d12;
+        --color-success: #f472b6;    /* Pink 400 (Red-ish) */
+        --color-danger: #34d399;     /* Emerald 400 (Green) */
+
+        --color-stock: #f472b6;
+        --color-bond: #60a5fa;
+        --color-cash: #34d399;
+
+        --bg-blob-1: #500724;
+        --bg-blob-2: #1e1b4b;
+        --bg-blob-3: #064e3b;
+      }
+
+      [data-theme='monochrome'] {
+        --color-base: #e5e5e5;
+        --color-card: #ffffff;
+        --color-text-base: #171717;
+        --color-text-muted: #737373;
+        --color-border: #a3a3a3;
+        --color-primary: #404040;
+        --color-primary-fg: #ffffff;
+        --color-primary-bg: #d4d4d4;
+        --color-cost-bg: #f5f5f5;
+        --color-value-bg: #f5f5f5;
+        --color-success: #262626; /* Darker/Black for Up */
+        --color-danger: #525252;  /* Lighter for Down */
+
+        --color-stock: #404040;
+        --color-bond: #737373;
+        --color-cash: #a3a3a3;
+
+        --bg-blob-1: #d4d4d4;
+        --bg-blob-2: #e5e5e5;
+        --bg-blob-3: #a3a3a3;
+      }
+
+      body {
+        font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+        background-color: var(--color-base);
+        color: var(--color-text-base);
+        /* Add global transition for theme switching */
+        transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 300ms;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* Animated Background Blobs */
+      body::before,
+      body::after {
+        content: '';
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: -1;
+        pointer-events: none;
+        filter: blur(80px);
+        opacity: 0.6;
+        transition: background 0.5s ease;
+      }
+
+      body::before {
+        background: radial-gradient(circle at 15% 50%, var(--bg-blob-1), transparent 40%),
+                    radial-gradient(circle at 85% 30%, var(--bg-blob-2), transparent 40%);
+        animation: blob-bounce 20s infinite alternate;
+      }
+
+      body::after {
+        background: radial-gradient(circle at 50% 80%, var(--bg-blob-3), transparent 50%);
+        animation: blob-bounce 25s infinite alternate-reverse;
+      }
+
+      @keyframes blob-bounce {
+        0% { transform: translate(0, 0) scale(1); }
+        100% { transform: translate(20px, -20px) scale(1.1); }
+      }
+
+      /* Custom Scrollbar for nicer tables */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--color-text-muted);
+        border-radius: 4px;
+        opacity: 0.5;
+        border: 2px solid transparent;
+        background-clip: content-box;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background-color: var(--color-primary);
+      }
+
+      /* Utility to hide number input spinners */
+      .no-spinner::-webkit-inner-spin-button, 
+      .no-spinner::-webkit-outer-spin-button { 
+        -webkit-appearance: none; 
+        margin: 0; 
+      }
+      .no-spinner {
+        -moz-appearance: textfield;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "recharts": "https://esm.sh/recharts@^3.6.0"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

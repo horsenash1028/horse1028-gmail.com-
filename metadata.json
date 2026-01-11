@@ -1,0 +1,5 @@
+{
+  "name": "ETF(TEST)",
+  "description": "A comprehensive investment dashboard tailored for Taiwanese ETF investors, featuring 60/40 allocation tracking, specific transaction cost calculations (tax & fee discounts), and a dedicated dividend registry.",
+  "requestFramePermissions": []
+}
